@@ -98,12 +98,14 @@ class ApplicationBuilder implements Serializable {
 
     private void buildStaticApp(String imageName) {
         checkDockerfileExists()
-        runCommand("docker build -t ${imageName}:latest .")
+        runCommand("cd target-repo/${repoName} && docker build -t ${imageName}:latest .")
     }
 
     private void checkDockerfileExists() {
-        def dockerfile = steps.findFiles(glob: 'Dockerfile')
-        if (!dockerfile) steps.error("❌ Dockerfile missing.")
+        def dockerfile = steps.findFiles(glob: "**/Dockerfile")
+        if (!dockerfile || dockerfile.size() == 0) {
+            steps.error("❌ Dockerfile missing.")
+        }
     }
 
     private void runCommand(String command) {
